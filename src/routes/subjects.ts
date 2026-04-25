@@ -14,17 +14,18 @@ router.get('/', async (req: express.Request, res: express.Response) => {
         const offset = (currentPage - 1 ) * limitPerPage
         const filterConditions = []
 
-        if(search){
-            filterConditions.push(
-                or(
-                    ilike(subjects.name, `%${search}%`),
-                    ilike(subjects.code, `%${search}%`)
-                )
-            );
+        if (search) {
+             const pattern = `%${String(search).replace(/[%_\\]/g, '\\$&')}%`;
+             filterConditions.push(
+                    or(
+                       ilike(subjects.name, pattern),
+                       ilike(subjects.code, pattern)
+                    )
+             );
         }
 
         if(department){
-            const deptPattern = `%${String(department).replace(/[%_]/g, '\\$&')} %`;
+            const deptPattern = `%${String(department).replace(/[%_]/g, '\\$&')}%`;
             filterConditions.push(ilike(departments.name, deptPattern));
         };
 
